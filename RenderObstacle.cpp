@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <glut.h>
-#include "RenderGroundObstacle.h"
+#include "RenderObstacle.h"
 
 using namespace std;
 

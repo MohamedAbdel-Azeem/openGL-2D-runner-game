@@ -43,7 +43,10 @@
     <ClCompile Include="Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RenderGroundObstacle.cpp">
+    <ClCompile Include="RenderObstacle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderRunner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -69,7 +72,7 @@
     <ClInclude Include="Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RenderGroundObstacle.h">
+    <ClInclude Include="RenderObstacle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

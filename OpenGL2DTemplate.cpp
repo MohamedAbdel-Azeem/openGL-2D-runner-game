@@ -1,5 +1,5 @@
 #include <glut.h>
-#include "RenderGroundObstacle.h"
+#include "RenderObstacle.h"
 
 
 
