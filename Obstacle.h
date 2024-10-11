@@ -1,6 +1,5 @@
-#ifndef OBSTACLE_H
-#define OBSTACLE_H
-
+#pragma once
+#include "Runner.h"
 #include <string>
 
 class Obstacle {
@@ -24,4 +23,3 @@ public:
     bool checkCollision(const Runner& runner);
 };
 
-#endif // OBSTACLE_H

@@ -1,5 +1,4 @@
-#ifndef RUNNER_H
-#define RUNNER_H
+#pragma once
 
 class Runner {
 private:
@@ -34,4 +33,3 @@ public:
     bool isCurrentlyDucking() const;
 };
 
-#endif // RUNNER_H
