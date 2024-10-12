@@ -1,22 +1,30 @@
+#include <iostream>
 #include "Obstacle.h"
 #include "Runner.h"
 
 // Constructor
-Obstacle::Obstacle(std::string obstacleType, int x, int y) : type(obstacleType), positionX(x), positionY(y) {}
+Obstacle::Obstacle(std::string obstacleType, float x, float y) : type(obstacleType), positionX(x), positionY(y) {}
 
 // Getters
 std::string Obstacle::getType() const { return type; }
 
 int* Obstacle::getPosition() {
-    static int pos[2] = { positionX, positionY };
+    int pos[2] = { positionX, positionY };
     return pos;
 }
+
 
 // Method to set position
 void Obstacle::setPosition(int x, int y) {
     positionX = x;
     positionY = y;
 }
+
+void Obstacle :: move(float factor) {
+    positionX -= factor;
+    std::cout << "Obstacle moved to " << positionX << std::endl;
+}
+
 
 // Collision detection with Runner
 bool Obstacle::checkCollision(const Runner& runner) {

@@ -2,55 +2,78 @@
 #include <cstdlib>
 #include <iostream>
 #include <glut.h>
+#include "Obstacle.h"
 #include "RenderObstacle.h"
 
 using namespace std;
 
-int randomNum = 0;
-static float obstacleX = 300.0f;
-
-
-void renderGroundObstacle()
+void renderSkyObstacle(Obstacle* obstacle)
 {
-    // Render the obstacle
-    glBegin(GL_QUADS);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glVertex3f(obstacleX, 0.0f, 0.0f);
-    glVertex3f(obstacleX, 50.0f, 0.0f);
-    glVertex3f(obstacleX + 50.0f, 50.0f, 0.0f);
-    glVertex3f(obstacleX + 50.0f, 0.0f, 0.0f);
-    glEnd();// Call the Display function again
-}
+    int* position = obstacle->getPosition();
+    int obstacleX = position[0];
+    int obstacleY = position[1];
 
-void renderSkyObstacle()
-{
-    // Render the obstacle
+    // Rocket body (main rectangle) - reduced X-axis width by half
     glBegin(GL_QUADS);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glVertex3f(obstacleX, 50.0f, 0.0f);
-    glVertex3f(obstacleX, 100.0f, 0.0f);
-    glVertex3f(obstacleX + 50.0f, 100.0f, 0.0f);
-    glVertex3f(obstacleX + 50.0f, 50.0f, 0.0f);
+    glColor3f(0.6f, 0.6f, 0.6f);  // Grey color for the body
+    glVertex3f(obstacleX, obstacleY, 0.0f);                // Top right
+    glVertex3f(obstacleX - 50.0f, obstacleY, 0.0f);        // Top left (rocket length is halved from 100 to 50)
+    glVertex3f(obstacleX - 50.0f, obstacleY + 15.0f, 0.0f);  // Bottom left
+    glVertex3f(obstacleX, obstacleY + 15.0f, 0.0f);        // Bottom right
+    glEnd();
+
+    // Rocket tip (triangle) - adjusted to match the new body width
+    glBegin(GL_TRIANGLES);
+    glColor3f(1.0f, 0.0f, 0.0f);  // Red color for the tip
+    glVertex3f(obstacleX - 50.0f, obstacleY - 5.0f, 0.0f);   // Bottom left point
+    glVertex3f(obstacleX - 70.0f, obstacleY + 7.5f, 0.0f);   // Left point (aligned with the new body width)
+    glVertex3f(obstacleX - 50.0f, obstacleY + 20.0f, 0.0f);  // Top right point
+    glEnd();
+
+    // Rocket fins (small triangles at the back, now on the right side, adjusted for new width)
+    glBegin(GL_TRIANGLES);
+    glColor3f(0.0f, 0.0f, 1.0f);  // Blue color for the fins
+
+    // Top fin
+    glVertex3f(obstacleX, obstacleY + 15.0f, 0.0f);         // Top point of the rocket body
+    glVertex3f(obstacleX, obstacleY + 25.0f, 0.0f);         // Farther out to the right
+    glVertex3f(obstacleX - 10.0f, obstacleY + 15.0f, 0.0f); // Attached to the body (adjusted for the narrower body)
+
+    // Bottom fin
+    glVertex3f(obstacleX, obstacleY, 0.0f);                 // Bottom point of the rocket body
+    glVertex3f(obstacleX, obstacleY - 10.0f, 0.0f);         // Farther out to the right
+    glVertex3f(obstacleX - 10.0f, obstacleY, 0.0f);         // Attached to the body (adjusted for the narrower body)
     glEnd();
 }
 
 
-void renderObstacle()
+
+void renderGroundObstacle(Obstacle* obstacle)
 {
-    
-    // Update the position of the obstacle
-    obstacleX -= 0.15f; // Move left by 1 pixel per frame
-    if (obstacleX < -50.0f) {
-        obstacleX = 300.0f; // Reset to the right ends
-        randomNum = 1 + (rand() % 10);
-    }
-    if (randomNum % 2 == 0)
-    {
-		renderGroundObstacle();
-	}
-    else
-    {
-		renderSkyObstacle();
-	}
+
+    int* position = obstacle->getPosition();
+    int obstacleX = position[0];
+    int obstacleY = position[1];
+    // Render the obstacle
+    glBegin(GL_QUADS);
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glVertex3f(obstacleX, obstacleY, 0.0f);
+    glVertex3f(obstacleX, obstacleY+50, 0.0f);
+    glVertex3f(obstacleX + 50.0f, obstacleY+50, 0.0f);
+    glVertex3f(obstacleX + 50.0f, obstacleY, 0.0f);
+    glEnd();// Call the Display function again
 }
+
+
+
+void renderObstacle(Obstacle* obstacle)
+{
+    std::string type = obstacle->getType();
+
+    if (type == "ground")
+        renderGroundObstacle(obstacle);
+    else
+        renderSkyObstacle(obstacle);
+}
+
 

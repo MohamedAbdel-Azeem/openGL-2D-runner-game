@@ -10,12 +10,12 @@ private:
 
 public:
     // Constructor
-    Obstacle(std::string obstacleType, int x, int y);
+    Obstacle(std::string obstacleType, float x, float y);
 
     // Getters
     std::string getType() const;
     int* getPosition();
-
+    void move(float factor);
     // Method to set position
     void setPosition(int x, int y);
 

@@ -1,3 +1,4 @@
 #pragma once
+#include "Obstacle.h"
 
-void renderObstacle();
+void renderObstacle(Obstacle* obstacle);
