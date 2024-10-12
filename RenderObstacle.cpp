@@ -64,6 +64,73 @@ void renderGroundObstacle(Obstacle* obstacle)
     glEnd();// Call the Display function again
 }
 
+void generateGroundObstacle2(Obstacle* obstacle)
+{
+    int* position = obstacle->getPosition();
+    int obstacleX = position[0];
+    int obstacleY = position[1];
+
+    // 1. Landmine base (circle) - Using GL_TRIANGLE_FAN
+    glBegin(GL_TRIANGLE_FAN);
+    glColor3f(0.3f, 0.3f, 0.3f);  // Dark grey color for the landmine base
+    glVertex3f(obstacleX, obstacleY, 0.0f);  // Center of the circle
+
+    int numSegments = 20;  // Approximation of a circle
+    float radius = 10.0f;
+    for (int i = 0; i <= numSegments; i++)
+    {
+        float angle = 2.0f * 3.14159f * float(i) / float(numSegments);  // Calculate the angle
+        float dx = radius * cosf(angle);  // X coordinate
+        float dy = radius * sinf(angle);  // Y coordinate
+        glVertex3f(obstacleX + dx, obstacleY + dy, 0.0f);  // Perimeter of the circle
+    }
+    glEnd();
+
+    // 2. Spikes on the landmine - Using GL_LINES for sharp spikes
+    glBegin(GL_LINES);
+    glColor3f(0.8f, 0.0f, 0.0f);  // Red color for the spikes
+
+    for (int i = 0; i < 6; i++)  // 6 spikes coming out radially
+    {
+        float angle = 2.0f * 3.14159f * float(i) / 6;  // Spacing spikes equally
+        float dx = radius * cosf(angle);
+        float dy = radius * sinf(angle);
+
+        // Start from the outer edge of the circle and extend outwards for the spikes
+        glVertex3f(obstacleX + dx, obstacleY + dy, 0.0f);
+        glVertex3f(obstacleX + 1.5f * dx, obstacleY + 1.5f * dy, 0.0f);  // Longer part of the spikes
+    }
+    glEnd();
+
+    // 3. Explosive center (small inner circle) - Using GL_TRIANGLE_FAN
+    glBegin(GL_TRIANGLE_FAN);
+    glColor3f(0.9f, 0.9f, 0.0f);  // Yellow color for the explosive core
+    glVertex3f(obstacleX, obstacleY, 0.0f);  // Center of the circle
+
+    float innerRadius = 4.0f;
+    for (int i = 0; i <= numSegments; i++)
+    {
+        float angle = 2.0f * 3.14159f * float(i) / float(numSegments);  // Calculate the angle
+        float dx = innerRadius * cosf(angle);  // X coordinate
+        float dy = innerRadius * sinf(angle);  // Y coordinate
+        glVertex3f(obstacleX + dx, obstacleY + dy, 0.0f);  // Perimeter of the small circle
+    }
+    glEnd();
+
+    // 4. Decorative cross (to make it look like a mechanical landmine) - Using GL_LINES
+    glBegin(GL_LINES);
+    glColor3f(0.5f, 0.5f, 0.5f);  // Grey color for cross decoration
+
+    // Horizontal line
+    glVertex3f(obstacleX - radius, obstacleY, 0.0f);
+    glVertex3f(obstacleX + radius, obstacleY, 0.0f);
+
+    // Vertical line
+    glVertex3f(obstacleX, obstacleY - radius, 0.0f);
+    glVertex3f(obstacleX, obstacleY + radius, 0.0f);
+    glEnd();
+}
+
 
 
 void renderObstacle(Obstacle* obstacle)
@@ -71,7 +138,7 @@ void renderObstacle(Obstacle* obstacle)
     std::string type = obstacle->getType();
 
     if (type == "ground")
-        renderGroundObstacle(obstacle);
+        generateGroundObstacle2(obstacle);
     else
         renderSkyObstacle(obstacle);
 }

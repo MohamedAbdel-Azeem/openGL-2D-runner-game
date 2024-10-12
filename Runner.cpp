@@ -13,14 +13,29 @@ int Runner::getPositionY() const { return positionY; }
 // Methods to modify state
 void Runner::incrementScore() { score++; }
 void Runner::decrementLives() { lives--; }
-void Runner::resetPosition() { positionY = 50; } // Reset to default Y position
-void Runner::jump() { isJumping = true; /* Add jump logic */ }
-void Runner::duck() { isDucking = true; /* Add duck logic */ }
+void Runner::resetPosition() 
+{ 
+    positionY = 50;
+    isJumping = false;
+    isDucking = false;
+} 
+void Runner::jump() 
+{ 
+    if (!isJumping)
+        positionY += 20;
+    isJumping = true;
+    
+}
+void Runner::duck() 
+{ 
+    if (!isDucking)
+		positionY -= 20;
+    isDucking = true;
+}
 void Runner::setPosition(int x, int y) {
     positionX = x;
     positionY = y;
 }
 
-// Check if the runner is jumping or ducking
 bool Runner::isCurrentlyJumping() const { return isJumping; }
 bool Runner::isCurrentlyDucking() const { return isDucking; }

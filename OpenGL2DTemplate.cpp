@@ -4,11 +4,15 @@
 #include <glut.h>
 #include <string>
 #include "RenderObstacle.h"
+#include "renderRunner.h"
 #include "Obstacle.h"
+#include "Runner.h"
 
 using namespace std;
 
 Obstacle* obstacle;
+Runner* runner;
+bool isKeyPressed = false;
 
 
 
@@ -19,7 +23,6 @@ void createObstacle() {
 	int initialPositionY = (type == "ground") ? 0 : 50;
 	int initialPositionX = 300;
 	obstacle = new Obstacle(type,initialPositionX, initialPositionY);
-	std :: cout << "Obstacle created" << std::endl;
 }
 
 void handleObstacle() {
@@ -29,32 +32,57 @@ void handleObstacle() {
 	if (posX < -50) { // assuming width of obstacle is 50
 		free(obstacle);
 		createObstacle();
-		std::cout << "new Obstacle created" << std::endl;
 	}
 	else {
-		obstacle->move(15.0f);
+		obstacle->move(1.5f);
 	}
 }
 
+void handleSpecialKeys(int key, int x, int y) {
+	isKeyPressed = true;
+	switch (key) {
+	case GLUT_KEY_UP:
+		runner->jump(); // Call the jump() function when the up arrow key is pressed
+		break;
+	case GLUT_KEY_DOWN:
+		runner->duck(); // Call the duck() function when the down arrow key is pressed
+		break;
+	default:
+		break;
+	}
+}
+
+void handleSpecialKeysUp(int key, int x, int y) {
+	isKeyPressed = false;
+}
 
 
 void Display() {
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	renderObstacle(obstacle);
+	renderRunner(runner);
+
+	if (isKeyPressed)
+		glutSpecialFunc(handleSpecialKeys);
+	else
+		runner->resetPosition();
 
 	glFlush(); // Flush the OpenGL pipeline to the viewport
 	glutPostRedisplay(); // Call the Display function again
 }
 
+
+
 void init() {
+	runner = new Runner();
 	createObstacle();
 }
 
 void timer(int value) {
 	handleObstacle();
 	glutPostRedisplay();	
-	glutTimerFunc(5, timer, 0);
+	glutTimerFunc(16, timer, 0);
 }
 
 void main(int argc, char** argr) {
@@ -67,6 +95,9 @@ void main(int argc, char** argr) {
 	glutCreateWindow("Runner Game");
 	glutDisplayFunc(Display);
 	
+	glutSpecialFunc(handleSpecialKeys);
+    glutSpecialUpFunc(handleSpecialKeysUp); 
+
 	glutTimerFunc(0, timer, 0);
 
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);

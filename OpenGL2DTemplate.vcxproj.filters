@@ -75,5 +75,8 @@
     <ClInclude Include="RenderObstacle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="renderRunner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

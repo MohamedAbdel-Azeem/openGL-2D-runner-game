@@ -101,6 +101,7 @@
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="Powerup.h" />
     <ClInclude Include="RenderObstacle.h" />
+    <ClInclude Include="renderRunner.h" />
     <ClInclude Include="Runner.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>

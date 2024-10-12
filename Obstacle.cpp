@@ -22,7 +22,6 @@ void Obstacle::setPosition(int x, int y) {
 
 void Obstacle :: move(float factor) {
     positionX -= factor;
-    std::cout << "Obstacle moved to " << positionX << std::endl;
 }
 
 
