@@ -7,6 +7,7 @@
 #include "renderRunner.h"
 #include "Obstacle.h"
 #include "Runner.h"
+#include "renderLives.h"
 
 using namespace std;
 
@@ -38,14 +39,21 @@ void handleObstacle() {
 		obstacle->move(1.5f);
 	}
 	bool didCollide = obstacle->checkCollision(*runner);
-	if (didCollide && (didCollide ^ obstacleCollided)) {
+	if (didCollide && (didCollide ^ obstacleCollided)) { // the Second Condition is to prevent multiple collision detection for the Same Obstacle
 		cout << "Collision!" << endl;
 		obstacleCollided = true;
+		runner->decrementLives();
+		if (runner->getLives() == 0) {
+			cout << "Game Over!" << endl;
+			exit(0);
+		}
 	}
 	if (!didCollide) {
 		obstacleCollided = false;
 	}
 }
+
+
 
 void handleSpecialKeys(int key, int x, int y) {
 	isKeyPressed = true;
@@ -69,6 +77,7 @@ void handleSpecialKeysUp(int key, int x, int y) {
 void Display() {
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	renderLives(runner->getLives());
 	renderObstacle(obstacle);
 	renderRunner(runner);
 
