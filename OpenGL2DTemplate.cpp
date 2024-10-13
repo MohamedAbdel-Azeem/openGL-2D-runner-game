@@ -13,6 +13,7 @@ using namespace std;
 Obstacle* obstacle;
 Runner* runner;
 bool isKeyPressed = false;
+bool obstacleCollided = false;
 
 
 
@@ -35,6 +36,14 @@ void handleObstacle() {
 	}
 	else {
 		obstacle->move(1.5f);
+	}
+	bool didCollide = obstacle->checkCollision(*runner);
+	if (didCollide && (didCollide ^ obstacleCollided)) {
+		cout << "Collision!" << endl;
+		obstacleCollided = true;
+	}
+	if (!didCollide) {
+		obstacleCollided = false;
 	}
 }
 

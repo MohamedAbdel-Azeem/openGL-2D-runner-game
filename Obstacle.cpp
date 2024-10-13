@@ -29,9 +29,16 @@ void Obstacle :: move(float factor) {
 bool Obstacle::checkCollision(const Runner& runner) {
     int runnerX = runner.getPositionX();
     int runnerY = runner.getPositionY();
-    // Simple collision logic (this can be improved based on dimensions)
-    if (runnerX + 15 > positionX && runnerX - 15 < positionX + 50) { // Check X overlap
-        if (runnerY + 15 > positionY && runnerY - 15 < positionY + 50) { // Check Y overlap
+
+    // Define the reduced hitbox dimensions
+    int runnerWidth = 10 / 2; // Half of the original width
+    int runnerHeight = 30 / 2; // Half of the original height
+    int obstacleWidth = 30 / 2; // Half of the original width
+    int obstacleHeight = 40; // full of the original height
+
+    // Adjust the collision logic to use the reduced hitbox dimensions
+    if (runnerX + runnerWidth > positionX && runnerX - runnerWidth < positionX + obstacleWidth) { // Check X overlap
+        if (runnerY + runnerHeight > positionY && runnerY - runnerHeight < positionY + obstacleHeight) { // Check Y overlap
             return true; // Collision detected
         }
     }
