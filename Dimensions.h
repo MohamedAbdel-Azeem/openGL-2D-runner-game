@@ -1,7 +1,11 @@
 #pragma once
 
-#define Collectible_width 30
-#define Collectible_height 30
+
+#define runner_width 10
+#define runner_height 30
+
+#define Collectible_width 10
+#define Collectible_height 10
 
 // Rocket dimensions
 #define Rocket_body_width 50

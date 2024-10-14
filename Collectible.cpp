@@ -1,5 +1,6 @@
 #include "Collectible.h"
 #include "Runner.h"
+#include "dimensions.h"
 #include <string>
 
 Collectible::Collectible(std::string type,float x, float y)
@@ -27,22 +28,35 @@ std::string Collectible::getType() const
 
 bool Collectible::checkCollision(const Runner& runner)
 {
-	int runnerX = runner.getPositionX();
-	int runnerY = runner.getPositionY();
-	int* collectiblePos = getPosition();
-	int collectibleX = collectiblePos[0];
-	int collectibleY = collectiblePos[1];
+    int runnerX = runner.getPositionX();
+    int runnerY = runner.getPositionY();
+    int* collectiblePos = getPosition();
+    int collectibleX = collectiblePos[0];
+    int collectibleY = collectiblePos[1];
 
-	int runnerWidth = 10 / 2; // Half of the original width
-	int runnerHeight = 30 / 2; // Half of the original height
-	int collectibleWidth = 30 / 2; // Half of the original width
-	int collectibleHeight = 30 / 2; // Half of the original height
+    int runnerWidth = runner_width / 2; // Half width
+    int runnerHeight = runner_height / 2; // Half height
+    int collectibleWidth = 30 / 2; // Half width of the collectible
+    int collectibleHeight = 30 / 2; // Half height of the collectible
 
-	// Adjust the collision logic to use the reduced hitbox dimensions
-	if (runnerX + runnerWidth > positionX && runnerX - runnerWidth < positionX + collectibleWidth) { // Check X overlap
-		if (runnerY + runnerHeight > positionY && runnerY - runnerHeight < positionY + collectibleHeight) { // Check Y overlap
-			return true; // Collision detected
-		}
-	}
-	return false; // No collision
+    // X-axis overlap (remains the same)
+    bool xOverlap = runnerX + runnerWidth > collectibleX && runnerX - runnerWidth < collectibleX + collectibleWidth;
+
+    // Y-axis overlap logic
+    bool yOverlap = false;
+
+    if (type == "flying") {
+        // Flying collectibles (runner must be jumping to collect)
+        if (runner.isCurrentlyJumping()) {
+            yOverlap = runnerY + runnerHeight > collectibleY && runnerY - runnerHeight < collectibleY + collectibleHeight;
+        }
+    }
+    else if (type == "ground") {
+        if (!runner.isCurrentlyJumping()) {
+            yOverlap = true;
+        }
+    }
+
+    // Collision detected if both X and Y overlap
+    return xOverlap && yOverlap;
 }

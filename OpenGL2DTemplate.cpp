@@ -34,7 +34,12 @@ void renderBitmapString(float x, float y, void* font, const char* string) {
 void createObstacle() {
 	int randomNum = 1 + (rand() % 100);
 	std::string type = "";
-	type = (randomNum % 2 == 0) ? "ground" : "flying";
+	if (obstacle != NULL) {
+		type = (obstacle->getType() == "ground") ? "flying" : "ground";
+	}
+	else {
+		type = (randomNum % 2 == 0) ? "ground" : "flying";
+	}
 	int initialPositionY = (type == "ground") ? 0 : 50;
 	int initialPositionX = 300;
 	obstacle = new Obstacle(type,initialPositionX, initialPositionY);
@@ -42,10 +47,16 @@ void createObstacle() {
 
 void createCollectible() {
 	int randomNum = 1 + (rand() % 100);
-	std::string type = "";
-	type = (randomNum % 2 == 0) ? "ground" : "flying";
+	std::string type;
+	if (obstacle != NULL) {
+		type = (obstacle->getType() == "ground") ? "flying" : "ground";
+	}
+	else {
+		type = "";
+		type = (randomNum % 2 == 0) ? "ground" : "flying";
+	}
 	int initialPositionY = (type == "ground") ? 0 : 50;
-	int initialPositionX = 370;
+	int initialPositionX = 330;
 	collectible = new Collectible(type, initialPositionX, initialPositionY);
 }
 
@@ -54,9 +65,8 @@ void handleCollectible() {
 	int posX = pos[0];
 	int posY = pos[1];
 	if (posX < -50) { // assuming width of collectible is 50
-			free(collectible);
 			createCollectible();
-		}
+	}
 	else {
 		collectible->move(moveFactor);
 	}
@@ -76,7 +86,6 @@ void handleObstacle() {
 	int posX = pos[0];
 	int posY = pos[1];
 	if (posX < -50) { // assuming width of obstacle is 50
-		free(obstacle);
 		createObstacle();
 	}
 	else {
