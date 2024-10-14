@@ -18,6 +18,8 @@ public:
 	int* getPosition();
 	std::string getType() const;
 	void move(float factor);
+	void setPosition(int x, int y);
+	void setType(std::string type);
 	bool getDidCollide() const { return didCollide; }
 	void setCollide() { didCollide = true; }
 

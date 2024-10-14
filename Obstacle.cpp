@@ -20,6 +20,10 @@ void Obstacle::setPosition(int x, int y) {
     positionY = y;
 }
 
+void Obstacle::setType(std::string obstacleType) {
+	type = obstacleType;
+}
+
 void Obstacle :: move(float factor) {
     positionX -= factor;
 }
