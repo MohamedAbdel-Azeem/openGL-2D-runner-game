@@ -89,6 +89,7 @@
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="OpenGL2DTemplate.cpp" />
     <ClCompile Include="Powerup.cpp" />
+    <ClCompile Include="renderCollectible.cpp" />
     <ClCompile Include="renderLives.cpp" />
     <ClCompile Include="RenderObstacle.cpp" />
     <ClCompile Include="renderRunner.cpp" />
@@ -97,10 +98,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collectible.h" />
+    <ClInclude Include="Dimensions.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="Powerup.h" />
+    <ClInclude Include="renderCollectible.h" />
     <ClInclude Include="renderLives.h" />
     <ClInclude Include="RenderObstacle.h" />
     <ClInclude Include="renderRunner.h" />

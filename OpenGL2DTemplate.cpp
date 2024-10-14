@@ -1,22 +1,35 @@
 #include <ctime>
 #include <iostream>
 #include <cstdlib>
-#include <glut.h>
 #include <string>
 #include "RenderObstacle.h"
 #include "renderRunner.h"
 #include "Obstacle.h"
 #include "Runner.h"
+#include "Collectible.h"
 #include "renderLives.h"
+#include "renderCollectible.h"
+#include <glut.h>
+
 
 using namespace std;
 
 Obstacle* obstacle;
 Runner* runner;
+Collectible* collectible;
+
+float moveFactor = 1.5f;
 bool isKeyPressed = false;
 bool obstacleCollided = false;
+bool collectibleCollided = false;
 
-
+void renderBitmapString(float x, float y, void* font, const char* string) {
+	glRasterPos2f(x, y);
+	while (*string) {
+		glutBitmapCharacter(font, *string);
+		string++;
+	}
+}
 
 void createObstacle() {
 	int randomNum = 1 + (rand() % 100);
@@ -25,6 +38,37 @@ void createObstacle() {
 	int initialPositionY = (type == "ground") ? 0 : 50;
 	int initialPositionX = 300;
 	obstacle = new Obstacle(type,initialPositionX, initialPositionY);
+}
+
+void createCollectible() {
+	int randomNum = 1 + (rand() % 100);
+	std::string type = "";
+	type = (randomNum % 2 == 0) ? "ground" : "flying";
+	int initialPositionY = (type == "ground") ? 0 : 50;
+	int initialPositionX = 370;
+	collectible = new Collectible(type, initialPositionX, initialPositionY);
+}
+
+void handleCollectible() {
+	int* pos = collectible->getPosition();
+	int posX = pos[0];
+	int posY = pos[1];
+	if (posX < -50) { // assuming width of collectible is 50
+			free(collectible);
+			createCollectible();
+		}
+	else {
+		collectible->move(moveFactor);
+	}
+	bool didCollide = collectible->checkCollision(*runner);
+	if (didCollide && (didCollide ^ collectibleCollided)) { // the Second Condition is to prevent multiple collision detection for the Same Obstacle
+			collectibleCollided = true;
+			runner->incrementScore();
+			collectible->setCollide();
+	}
+	if (!didCollide) {
+		collectibleCollided = false;
+	}
 }
 
 void handleObstacle() {
@@ -36,7 +80,7 @@ void handleObstacle() {
 		createObstacle();
 	}
 	else {
-		obstacle->move(1.5f);
+		obstacle->move(moveFactor);
 	}
 	bool didCollide = obstacle->checkCollision(*runner);
 	if (didCollide && (didCollide ^ obstacleCollided)) { // the Second Condition is to prevent multiple collision detection for the Same Obstacle
@@ -80,6 +124,11 @@ void Display() {
 	renderLives(runner->getLives());
 	renderObstacle(obstacle);
 	renderRunner(runner);
+	if (! collectibleCollided)
+		renderCollectible(collectible);
+
+	std::string scoreText = "Score: " + std::to_string(runner->getScore());
+	renderBitmapString(250, 270, GLUT_BITMAP_TIMES_ROMAN_24, scoreText.c_str());
 
 	if (isKeyPressed)
 		glutSpecialFunc(handleSpecialKeys);
@@ -95,10 +144,12 @@ void Display() {
 void init() {
 	runner = new Runner();
 	createObstacle();
+	createCollectible();
 }
 
 void timer(int value) {
 	handleObstacle();
+	handleCollectible();
 	glutPostRedisplay();	
 	glutTimerFunc(16, timer, 0);
 }

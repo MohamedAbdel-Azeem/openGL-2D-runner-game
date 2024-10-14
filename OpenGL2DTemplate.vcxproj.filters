@@ -52,6 +52,9 @@
     <ClCompile Include="renderLives.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="renderCollectible.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Runner.h">
@@ -82,6 +85,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="renderLives.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderCollectible.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dimensions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
