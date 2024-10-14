@@ -1,3 +1,4 @@
+#include <chrono>
 #include <ctime>
 #include <iostream>
 #include <cstdlib>
@@ -13,6 +14,7 @@
 
 
 using namespace std;
+using namespace std::chrono;
 
 Obstacle* obstacle;
 Runner* runner;
@@ -23,12 +25,20 @@ bool isKeyPressed = false;
 bool obstacleCollided = false;
 bool collectibleCollided = false;
 
+
+steady_clock::time_point startTime;
+
 void renderBitmapString(float x, float y, void* font, const char* string) {
 	glRasterPos2f(x, y);
 	while (*string) {
 		glutBitmapCharacter(font, *string);
 		string++;
 	}
+}
+
+int getTime() {
+	auto currentTime = steady_clock::now();
+	return static_cast<int>(duration_cast<seconds>(currentTime - startTime).count());
 }
 
 void createObstacle() {
@@ -154,12 +164,22 @@ void init() {
 	runner = new Runner();
 	createObstacle();
 	createCollectible();
+
+	startTime = steady_clock::now();
+}
+
+void handleTimeChange() {
+	int currentTime = getTime();
+	if (currentTime % 10 == 0) {
+		moveFactor += 0.005f;
+	}
 }
 
 void timer(int value) {
 	handleObstacle();
 	handleCollectible();
-	glutPostRedisplay();	
+	glutPostRedisplay();
+	handleTimeChange();
 	glutTimerFunc(16, timer, 0);
 }
 
