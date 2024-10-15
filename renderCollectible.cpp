@@ -20,10 +20,12 @@ void renderCollectible(Collectible* collectible) {
     static float offsetY = 0.0f;
     offsetY = sin(glutGet(GLUT_ELAPSED_TIME) * 0.01f) * 3.0f; // Faster floating with small height
 
-    // Offset for floating ground collectible
-    std::string type = collectible->getType();
-    if (type == "ground") {
+    
+    if (posY == Ground_height) {
         posY += 15;  // Add an offset to raise the ground collectible slightly above the ground
+    }
+    else {
+        posY += 5;
     }
 
     // Apply the floating effect to the Y position

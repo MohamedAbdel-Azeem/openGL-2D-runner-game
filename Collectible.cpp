@@ -1,11 +1,9 @@
 #include "Collectible.h"
 #include "Runner.h"
 #include "dimensions.h"
-#include <string>
 
-Collectible::Collectible(std::string type,float x, float y)
+Collectible::Collectible(float x, float y)
 {
-	this->type = type;
 	positionX = x;
 	positionY = y;
 }
@@ -21,10 +19,6 @@ void Collectible::move(float factor)
 	positionX -= factor;
 }
 
-std::string Collectible::getType() const
-{
-	return type;
-}
 
 bool Collectible::checkCollision(const Runner& runner)
 {
@@ -45,11 +39,11 @@ bool Collectible::checkCollision(const Runner& runner)
     // Y-axis overlap logic
     bool yOverlap = false;
 
-    if (type == "ground") {
-        yOverlap = !runner.isCurrentlyJumping();
+    if (positionY > Ground_height) { // flying
+        yOverlap = runner.isCurrentlyJumping();
     }
-    else {
-        yOverlap =  !runner.isCurrentlyDucking();
+    else { // ground
+        yOverlap =  ! runner.isCurrentlyJumping();
     }
 
     // Collision detected if both X and Y overlap

@@ -12,6 +12,7 @@
 #include "renderCollectible.h"
 #include "renderBounds.h"	
 #include "Dimensions.h"
+#include "Powerup.h"
 #include <glut.h>
 
 
@@ -79,7 +80,7 @@ void createCollectible() {
 	}
 	int initialPositionY = (type == "ground") ? 0 + Ground_height : 50 + Ground_height;
 	int initialPositionX = 330;
-	collectible = new Collectible(type, initialPositionX, initialPositionY);
+	collectible = new Collectible(initialPositionX, initialPositionY);
 }
 
 void handleCollectible() {

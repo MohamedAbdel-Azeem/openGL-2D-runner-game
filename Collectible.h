@@ -5,18 +5,16 @@
 class Collectible
 {
 private:
-	std::string type;
     int positionX; // Horizontal position
     int positionY; // Vertical position
 	bool didCollide = false;
 
 public:
     // Constructor
-	Collectible(std::string type,float x, float y);
+	Collectible(float x, float y);
 
 	// Getters
 	int* getPosition();
-	std::string getType() const;
 	void move(float factor);
 	bool getDidCollide() const { return didCollide; }
 	void setCollide() { didCollide = true; }
