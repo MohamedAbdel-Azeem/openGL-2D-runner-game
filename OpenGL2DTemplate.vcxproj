@@ -83,6 +83,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BoundingBox.cpp" />
     <ClCompile Include="Collectible.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Obstacle.cpp" />
@@ -92,10 +93,12 @@
     <ClCompile Include="renderCollectible.cpp" />
     <ClCompile Include="renderLives.cpp" />
     <ClCompile Include="RenderObstacle.cpp" />
+    <ClCompile Include="renderPowerup.cpp" />
     <ClCompile Include="renderRunner.cpp" />
     <ClCompile Include="Runner.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="Collectible.h" />
     <ClInclude Include="Dimensions.h" />
     <ClInclude Include="Game.h" />
@@ -106,6 +109,7 @@
     <ClInclude Include="renderCollectible.h" />
     <ClInclude Include="renderLives.h" />
     <ClInclude Include="RenderObstacle.h" />
+    <ClInclude Include="renderPowerup.h" />
     <ClInclude Include="renderRunner.h" />
     <ClInclude Include="Runner.h" />
   </ItemGroup>

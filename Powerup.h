@@ -2,24 +2,30 @@
 #include "Runner.h"
 #include <string>
 
+enum Powerup_Type {
+	Fly,
+	Invincible
+};
+
 class Powerup
 {
 private:
-	std::string type;
+	Powerup_Type type;
 	int positionX; // Horizontal position
 	int positionY; // Vertical position
 	bool didCollide = false;
 
 public:
 	// Constructor
-	Powerup(std::string type, float x, float y);
+	Powerup(Powerup_Type type, float x, float y);
 
 	// Getters
 	int* getPosition();
-	std::string getType() const;
+	Powerup_Type getType() const;
 	void move(float factor);
 	bool getDidCollide() const { return didCollide; }
 	void setCollide() { didCollide = true; }
+	void setPosition(int x, int y) { positionX = x; positionY = y; }
 
 	// Collision detection with Runner
 	bool checkCollision(const Runner& runner);

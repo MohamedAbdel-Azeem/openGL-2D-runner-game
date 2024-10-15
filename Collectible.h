@@ -18,6 +18,7 @@ public:
 	void move(float factor);
 	bool getDidCollide() const { return didCollide; }
 	void setCollide() { didCollide = true; }
+	void setPosition(int x, int y) { positionX = x; positionY = y; }
 
 	// Collision detection with Runner
 	bool checkCollision(const Runner& runner);

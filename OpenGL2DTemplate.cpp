@@ -13,9 +13,9 @@
 #include "renderBounds.h"	
 #include "Dimensions.h"
 #include "Powerup.h"
+#include "renderPowerup.h"
+#include "BoundingBox.h"
 #include <glut.h>
-
-
 
 using namespace std;
 using namespace std::chrono;
@@ -23,6 +23,7 @@ using namespace std::chrono;
 Obstacle* obstacle;
 Runner* runner;
 Collectible* collectible;
+Powerup* powerup;
 
 float moveFactor = 1.55f;
 bool isKeyPressed = false;
@@ -56,31 +57,64 @@ int getTime() {
 
 void createObstacle() {
 	int randomNum = 1 + (rand() % 100);
-	std::string type = "";
-	if (obstacle != NULL && obstacle->getPosition()[0] > 270 ) {
-		type = (obstacle->getType() == "ground") ? "flying" : "ground";
+	int initialPositionX = 350;
+	int initialPositionY = (randomNum % 2 == 0)? Ground_height : Ground_height + 50;
+	std::string type = (randomNum % 2 == 0) ? "ground" : "flying";
+	obstacle = new Obstacle(type, initialPositionX, initialPositionY);
+
+	// Check for overlaps with existing collectibles and powerups
+	BoundingBox newBox = getBoundingBox(obstacle);
+	while (isOverlapping(newBox, getBoundingBox(collectible)) ||
+		isOverlapping(newBox, getBoundingBox(powerup))) {
+		initialPositionX += 100; // Move the obstacle further along the x-axis
+		obstacle->setPosition(initialPositionX, initialPositionY);
+		newBox = getBoundingBox(obstacle);
 	}
-	else {
-		type = (randomNum % 2 == 0) ? "ground" : "flying";
-	}
-	int initialPositionY = (type == "ground") ? 0 + Ground_height : 50 + Ground_height;
-	int initialPositionX = 400;
-	obstacle = new Obstacle(type,initialPositionX, initialPositionY);
 }
 
 void createCollectible() {
 	int randomNum = 1 + (rand() % 100);
-	std::string type;
-	if (obstacle != NULL) {
-		type = (obstacle->getType() == "ground") ? "flying" : "ground";
+	int initialPositionX = 400;
+	int initialPositionY = (randomNum % 2 == 0) ? Ground_height : Ground_height + 50;
+	collectible = new Collectible(initialPositionX, initialPositionY);
+
+	// Check for overlaps with existing obstacles and powerups
+	BoundingBox newBox = getBoundingBox(collectible);
+	while (isOverlapping(newBox, getBoundingBox(obstacle)) ||
+		isOverlapping(newBox, getBoundingBox(powerup))) {
+		initialPositionX += 100; // Move the collectible further along the x-axis
+		collectible->setPosition(initialPositionX, initialPositionY);
+		newBox = getBoundingBox(collectible);
+	}
+}
+
+void createPowerup() {
+	int randomNum = 1 + (rand() % 100);
+	int initialPositionX = 450;
+	int initialPositionY = (randomNum % 2 == 0) ? Ground_height : Ground_height + 50;
+	Powerup_Type type = static_cast<Powerup_Type>(rand() % 3); // Randomly select a powerup type
+	powerup = new Powerup(type,initialPositionX, initialPositionY);
+
+	// Check for overlaps with existing obstacles and collectibles
+	BoundingBox newBox = getBoundingBox(powerup);
+	while (isOverlapping(newBox, getBoundingBox(obstacle)) ||
+		isOverlapping(newBox, getBoundingBox(collectible))) {
+		initialPositionX += 100; // Move the powerup further along the x-axis
+		powerup->setPosition(initialPositionX, initialPositionY);
+		newBox = getBoundingBox(powerup);
+	}
+}
+
+void handlePowerup() {
+	int* pos = powerup->getPosition();
+	int posX = pos[0];
+	int posY = pos[1];
+	if (posX < -50) { // assuming width of powerup is 50
+			createPowerup();
 	}
 	else {
-		type = "";
-		type = (randomNum % 2 == 0) ? "ground" : "flying";
+		powerup->move(moveFactor);
 	}
-	int initialPositionY = (type == "ground") ? 0 + Ground_height : 50 + Ground_height;
-	int initialPositionX = 330;
-	collectible = new Collectible(initialPositionX, initialPositionY);
 }
 
 void handleCollectible() {
@@ -178,6 +212,8 @@ void Display() {
 	renderSky();
 	renderLives(runner->getLives());
 	renderObstacle(obstacle);
+	renderPowerup(powerup);
+	
 	renderRunner(runner);
 	if (!collectibleCollided)
 		renderCollectible(collectible);
@@ -207,6 +243,7 @@ void init() {
 	runner = new Runner();
 	createObstacle();
 	createCollectible();
+	createPowerup();
 
 	startTime = steady_clock::now();
 	lastRotationTime = steady_clock::now();
@@ -221,7 +258,7 @@ void handleTimeChange() {
 	}
 
 	// Start the rotation if not currently rotating and 10 seconds have passed
-	if (!isRotating && duration_cast<seconds>(steady_clock::now() - lastRotationTime).count() >= 10) {
+	if (!isRotating && duration_cast<seconds>(steady_clock::now() - lastRotationTime).count() >= 15) {
 		isRotating = true;
 		targetRotationAngle = rotationAngle + 180.0f; // Set the target rotation angle
 		if (targetRotationAngle >= 360.0f) {
@@ -247,6 +284,7 @@ void handleTimeChange() {
 void timer(int value) {
 	handleObstacle();
 	handleCollectible();
+	handlePowerup();
 	glutPostRedisplay();
 	handleTimeChange();
 	glutTimerFunc(16, timer, 0);
