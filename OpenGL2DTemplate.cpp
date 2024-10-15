@@ -29,6 +29,14 @@ bool obstacleCollided = false;
 bool collectibleCollided = false;
 
 
+bool isDay = true;
+float rotationAngle = 0.0f;
+float targetRotationAngle = 0.0f; // Target angle to reach
+bool isRotating = false; // Flag to indicate if rotation is in progress
+float rotationSpeed = 180.0f / (1.0f * 1000); // Degrees per millisecond for 1 second to rotate 180 degrees
+steady_clock::time_point lastRotationTime;
+
+
 steady_clock::time_point startTime;
 
 void renderBitmapString(float x, float y, void* font, const char* string) {
@@ -140,10 +148,31 @@ void handleSpecialKeysUp(int key, int x, int y) {
 	isKeyPressed = false;
 }
 
+void drawRotatingBackground() {
+	glPushMatrix();
+	glTranslatef(0, 0, 0); // Center the rectangle at the origin
+	glRotatef(rotationAngle, 0.0f, 0.0f, 1.0f); // Rotate around Z-axis
+
+	// Draw a larger rectangle
+	glBegin(GL_QUADS);
+	glColor3f(0.2f, 0.5f, 0.7f); // First color
+	glVertex2f(-960, -640); // Bottom left (increased size)
+	glVertex2f(960, -640); // Bottom right (increased size)
+	glColor3f(0.0f, 0.0f, 0.2f); // Second color
+	glVertex2f(960, 640); // Top right (increased size)
+	glVertex2f(-960, 640); // Top left (increased size)
+	glEnd();
+
+	glPopMatrix();
+}
+
 
 void Display() {
+	
 	glClear(GL_COLOR_BUFFER_BIT);
 
+
+	drawRotatingBackground();
 	glPushMatrix();
 	renderSky();
 	renderLives(runner->getLives());
@@ -179,12 +208,38 @@ void init() {
 	createCollectible();
 
 	startTime = steady_clock::now();
+	lastRotationTime = steady_clock::now();
 }
+
+
 
 void handleTimeChange() {
 	int currentTime = getTime();
 	if (currentTime % 10 == 0) {
 		moveFactor += 0.005f;
+	}
+
+	// Start the rotation if not currently rotating and 10 seconds have passed
+	if (!isRotating && duration_cast<seconds>(steady_clock::now() - lastRotationTime).count() >= 10) {
+		isRotating = true;
+		targetRotationAngle = rotationAngle + 180.0f; // Set the target rotation angle
+		if (targetRotationAngle >= 360.0f) {
+			targetRotationAngle -= 360.0f; // Keep it within 0-360
+		}
+		lastRotationTime = steady_clock::now(); // Update last rotation time
+	}
+
+	// Smoothly interpolate rotation if rotating
+	if (isRotating) {
+		auto elapsedTime = duration_cast<milliseconds>(steady_clock::now() - lastRotationTime).count();
+		if (elapsedTime < 1000) { // 1 second
+			// Calculate the new rotation angle
+			rotationAngle = rotationAngle + rotationSpeed * 16; // Adjust based on your frame timing
+		}
+		else {
+			rotationAngle = targetRotationAngle; // Snap to the target
+			isRotating = false; // Stop rotating
+		}
 	}
 }
 
