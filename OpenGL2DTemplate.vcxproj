@@ -88,12 +88,12 @@
     <ClCompile Include="Obstacle.cpp" />
     <ClCompile Include="OpenGL2DTemplate.cpp" />
     <ClCompile Include="Powerup.cpp" />
+    <ClCompile Include="renderBounds.cpp" />
     <ClCompile Include="renderCollectible.cpp" />
     <ClCompile Include="renderLives.cpp" />
     <ClCompile Include="RenderObstacle.cpp" />
     <ClCompile Include="renderRunner.cpp" />
     <ClCompile Include="Runner.cpp" />
-    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collectible.h" />
@@ -102,12 +102,12 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Obstacle.h" />
     <ClInclude Include="Powerup.h" />
+    <ClInclude Include="renderBounds.h" />
     <ClInclude Include="renderCollectible.h" />
     <ClInclude Include="renderLives.h" />
     <ClInclude Include="RenderObstacle.h" />
     <ClInclude Include="renderRunner.h" />
     <ClInclude Include="Runner.h" />
-    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

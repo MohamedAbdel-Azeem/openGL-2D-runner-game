@@ -23,7 +23,7 @@ void renderCollectible(Collectible* collectible) {
     // Offset for floating ground collectible
     std::string type = collectible->getType();
     if (type == "ground") {
-        posY += 10;  // Add an offset to raise the ground collectible slightly above the ground
+        posY += 15;  // Add an offset to raise the ground collectible slightly above the ground
     }
 
     // Apply the floating effect to the Y position

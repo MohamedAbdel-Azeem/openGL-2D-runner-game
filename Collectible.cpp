@@ -45,16 +45,11 @@ bool Collectible::checkCollision(const Runner& runner)
     // Y-axis overlap logic
     bool yOverlap = false;
 
-    if (type == "flying") {
-        // Flying collectibles (runner must be jumping to collect)
-        if (runner.isCurrentlyJumping()) {
-            yOverlap = runnerY + runnerHeight > collectibleY && runnerY - runnerHeight < collectibleY + collectibleHeight;
-        }
+    if (type == "ground") {
+        yOverlap = !runner.isCurrentlyJumping();
     }
-    else if (type == "ground") {
-        if (!runner.isCurrentlyJumping()) {
-            yOverlap = true;
-        }
+    else {
+        yOverlap =  !runner.isCurrentlyDucking();
     }
 
     // Collision detected if both X and Y overlap

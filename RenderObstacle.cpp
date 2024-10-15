@@ -55,8 +55,8 @@ void renderSkyObstacle(Obstacle* obstacle)
 void renderGroundObstacle(Obstacle* obstacle)
 {
     int* position = obstacle->getPosition();
-    int obstacleX = position[0];
-    int obstacleY = position[1];
+    float obstacleX = position[0];
+    float obstacleY = position[1] + 3; // +5 to increase the height of the landmine from ground level
 
     // 1. Landmine base (circle) - Using GL_TRIANGLE_FAN
     glBegin(GL_TRIANGLE_FAN);

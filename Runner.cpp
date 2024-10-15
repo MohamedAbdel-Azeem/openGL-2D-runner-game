@@ -1,8 +1,8 @@
 #include "Runner.h"
 #include <iostream>
-
+#include "Dimensions.h"
 // Constructor
-Runner::Runner() : lives(5), score(0), positionX(100), positionY(50), isJumping(false), isDucking(false) {}
+Runner::Runner() : lives(5), score(0), positionX(100), positionY(Ground_height), isJumping(false), isDucking(false) {}
 
 // Getters
 int Runner::getLives() const { return lives; }

@@ -1,5 +1,10 @@
 #pragma once
 
+#define Ground_width 300
+#define Ground_height 40
+
+#define Sky_min 190 
+#define Sky_max 250
 
 #define runner_width 10
 #define runner_height 30

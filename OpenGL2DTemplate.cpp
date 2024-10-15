@@ -1,4 +1,4 @@
-#include <chrono>
+﻿#include <chrono>
 #include <ctime>
 #include <iostream>
 #include <cstdlib>
@@ -10,7 +10,10 @@
 #include "Collectible.h"
 #include "renderLives.h"
 #include "renderCollectible.h"
+#include "renderBounds.h"	
+#include "Dimensions.h"
 #include <glut.h>
+
 
 
 using namespace std;
@@ -20,7 +23,7 @@ Obstacle* obstacle;
 Runner* runner;
 Collectible* collectible;
 
-float moveFactor = 1.5f;
+float moveFactor = 1.55f;
 bool isKeyPressed = false;
 bool obstacleCollided = false;
 bool collectibleCollided = false;
@@ -29,6 +32,7 @@ bool collectibleCollided = false;
 steady_clock::time_point startTime;
 
 void renderBitmapString(float x, float y, void* font, const char* string) {
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glRasterPos2f(x, y);
 	while (*string) {
 		glutBitmapCharacter(font, *string);
@@ -44,14 +48,14 @@ int getTime() {
 void createObstacle() {
 	int randomNum = 1 + (rand() % 100);
 	std::string type = "";
-	if (obstacle != NULL) {
+	if (obstacle != NULL && obstacle->getPosition()[0] > 270 ) {
 		type = (obstacle->getType() == "ground") ? "flying" : "ground";
 	}
 	else {
 		type = (randomNum % 2 == 0) ? "ground" : "flying";
 	}
-	int initialPositionY = (type == "ground") ? 0 : 50;
-	int initialPositionX = 300;
+	int initialPositionY = (type == "ground") ? 0 + Ground_height : 50 + Ground_height;
+	int initialPositionX = 400;
 	obstacle = new Obstacle(type,initialPositionX, initialPositionY);
 }
 
@@ -65,7 +69,7 @@ void createCollectible() {
 		type = "";
 		type = (randomNum % 2 == 0) ? "ground" : "flying";
 	}
-	int initialPositionY = (type == "ground") ? 0 : 50;
+	int initialPositionY = (type == "ground") ? 0 + Ground_height : 50 + Ground_height;
 	int initialPositionX = 330;
 	collectible = new Collectible(type, initialPositionX, initialPositionY);
 }
@@ -140,14 +144,23 @@ void handleSpecialKeysUp(int key, int x, int y) {
 void Display() {
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	glPushMatrix();
+	renderSky();
 	renderLives(runner->getLives());
 	renderObstacle(obstacle);
 	renderRunner(runner);
-	if (! collectibleCollided)
+	if (!collectibleCollided)
 		renderCollectible(collectible);
 
 	std::string scoreText = "Score: " + std::to_string(runner->getScore());
-	renderBitmapString(250, 270, GLUT_BITMAP_TIMES_ROMAN_24, scoreText.c_str());
+	std::string timeText = "Time: " + std::to_string(getTime()) + " Seconds";
+	renderBitmapString(240, 285, GLUT_BITMAP_TIMES_ROMAN_24, scoreText.c_str());
+	renderBitmapString(240, 265, GLUT_BITMAP_TIMES_ROMAN_24, timeText.c_str());
+	renderBitmapString(170, 245, GLUT_BITMAP_TIMES_ROMAN_24, "Press UP to jump and DOWN to duck");
+
+	renderGround();
+	
+	glPopMatrix();
 
 	if (isKeyPressed)
 		glutSpecialFunc(handleSpecialKeys);
@@ -199,7 +212,7 @@ void main(int argc, char** argr) {
 	glutTimerFunc(0, timer, 0);
 
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.2f, 0.5f, 0.7f, 1.0f);
 	gluOrtho2D(0.0, 300, 0.0, 300);
 
 	glutMainLoop();

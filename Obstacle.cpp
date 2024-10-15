@@ -38,8 +38,11 @@ bool Obstacle::checkCollision(const Runner& runner) {
 
     // Adjust the collision logic to use the reduced hitbox dimensions
     if (runnerX + runnerWidth > positionX && runnerX - runnerWidth < positionX + obstacleWidth) { // Check X overlap
-        if (runnerY + runnerHeight > positionY && runnerY - runnerHeight < positionY + obstacleHeight) { // Check Y overlap
-            return true; // Collision detected
+        if (type == "ground") {
+            return ! runner.isCurrentlyJumping();
+        }
+        else {
+        	return ! runner.isCurrentlyDucking();
         }
     }
     return false; // No collision
