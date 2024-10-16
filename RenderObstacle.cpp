@@ -121,6 +121,10 @@ void renderGroundObstacle(Obstacle* obstacle)
 
 void renderObstacle(Obstacle* obstacle)
 {
+
+    if (obstacle == NULL)
+		return;
+
     std::string type = obstacle->getType();
 
     if (type == "ground")

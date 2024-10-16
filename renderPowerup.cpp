@@ -3,6 +3,10 @@
 #include "Dimensions.h"
 
 void renderPowerup(Powerup* powerup) {
+
+	if (powerup == NULL)
+		return;
+
 	int* pos = powerup->getPosition();
 	int x = pos[0];
 	int y = pos[1];

@@ -33,7 +33,7 @@ bool collectibleCollided = false;
 
 bool isGameOver = false;
 bool isGameEnd = false;
-const int GAME_TIME = 10;
+const int GAME_TIME = 90;
 
 bool isDay = true;
 float rotationAngle = 0.0f;
@@ -44,6 +44,11 @@ steady_clock::time_point lastRotationTime;
 
 
 steady_clock::time_point startTime;
+
+
+
+void softRestart();
+
 
 void renderBitmapString(float x, float y, void* font, const char* string) {
 	glColor3f(1.0f, 1.0f, 1.0f);
@@ -110,6 +115,11 @@ void createPowerup() {
 }
 
 void handlePowerup() {
+
+	if (powerup == NULL) {
+		createPowerup();
+	}
+
 	int* pos = powerup->getPosition();
 	int posX = pos[0];
 	int posY = pos[1];
@@ -122,6 +132,11 @@ void handlePowerup() {
 }
 
 void handleCollectible() {
+
+	if (collectible == NULL) {
+		createCollectible();
+	}
+
 	int* pos = collectible->getPosition();
 	int posX = pos[0];
 	int posY = pos[1];
@@ -143,6 +158,11 @@ void handleCollectible() {
 }
 
 void handleObstacle() {
+
+	if (obstacle == NULL) {
+		createObstacle();
+	}
+
 	int* pos = obstacle->getPosition();
 	int posX = pos[0];
 	int posY = pos[1];
@@ -159,6 +179,9 @@ void handleObstacle() {
 		runner->decrementLives();
 		if (runner->getLives() == 0) {
 			isGameOver = true;
+		}
+		else {
+			softRestart();
 		}
 	}
 	if (!didCollide) {
@@ -275,10 +298,16 @@ void init() {
 
 
 
+void softRestart() { // When an Obstacle Collides with the Runner Game will do a Soft Restart
+	collectible = NULL;
+	powerup = NULL;
+	obstacle = NULL;
+}
+
 void handleTimeChange() {
 	int currentTime = getTime();
 
-	if (currentTime >= 10) {
+	if (currentTime >= GAME_TIME) {
 		isGameEnd = true;
 	}
 

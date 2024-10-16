@@ -5,6 +5,11 @@
 #include <glut.h>
 
 void renderCollectible(Collectible* collectible) {
+
+    if (collectible == NULL) {
+		return;
+	}
+
     if (collectible->getDidCollide() == true) {
         return;
     }
