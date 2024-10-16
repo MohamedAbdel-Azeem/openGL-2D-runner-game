@@ -1,8 +1,13 @@
 #include "Runner.h"
-#include <iostream>
 #include "Dimensions.h"
+
 // Constructor
-Runner::Runner() : lives(5), score(0), positionX(100), positionY(Ground_height), isJumping(false), isDucking(false) {}
+Runner::Runner() : lives(5), score(0), positionX(50), positionY(Ground_height), isJumping(false), isDucking(false), isFalling(false) {}
+
+
+
+const float JUMP_SPEED = 2.0f;
+const float JUMP_HEIGHT = 35.0f + Ground_height;
 
 // Getters
 int Runner::getLives() const { return lives; }
@@ -15,27 +20,54 @@ void Runner::incrementScore() { score++; }
 void Runner::decrementLives() { lives--; }
 void Runner::resetPosition() 
 { 
-    positionY = 50;
+    positionY = Ground_height;
     isJumping = false;
     isDucking = false;
+    isFalling = false;
 } 
 void Runner::jump() 
 { 
-    if (!isJumping)
-        positionY += 20;
+    if (isJumping || isFalling) return;
     isJumping = true;
-    
+    isFalling = false;
 }
+
+
+void Runner::updateJump()
+{
+    if (isJumping && !isFalling)
+    {
+		positionY += JUMP_SPEED;
+        if (positionY > JUMP_HEIGHT)
+        {
+            isFalling = true;
+		}
+        return;
+    }
+    if (isFalling) {
+		positionY -= JUMP_SPEED;
+		if (positionY < Ground_height)
+		{ 
+            isFalling = false;
+            isJumping = false;
+            positionY = Ground_height;
+        }
+        return;
+    }
+}
+
 void Runner::duck() 
 { 
+    if (isJumping || isFalling) return;
     if (!isDucking)
 		positionY -= 20;
     isDucking = true;
 }
+
 void Runner::setPosition(int x, int y) {
     positionX = x;
     positionY = y;
 }
 
-bool Runner::isCurrentlyJumping() const { return isJumping; }
+bool Runner::isCurrentlyJumping() const { return isJumping || isFalling; }
 bool Runner::isCurrentlyDucking() const { return isDucking; }

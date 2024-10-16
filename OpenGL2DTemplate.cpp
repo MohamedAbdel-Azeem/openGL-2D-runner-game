@@ -195,7 +195,8 @@ void handleSpecialKeys(int key, int x, int y) {
 	isSpecialKeyboardPressed = true;
 	switch (key) {
 	case GLUT_KEY_UP:
-		runner->jump(); // Call the jump() function when the up arrow key is pressed
+		if (! runner->isCurrentlyJumping())
+			runner->jump(); // Call the jump() function when the up arrow key is pressed
 		break;
 	case GLUT_KEY_DOWN:
 		runner->duck(); // Call the duck() function when the down arrow key is pressed
@@ -272,12 +273,7 @@ void Display() {
 	renderGround();
 	
 	glPopMatrix();
-
-	if (isSpecialKeyboardPressed)
-		glutSpecialFunc(handleSpecialKeys);
-	else
-		runner->resetPosition();
-
+	
 	glFlush(); // Flush the OpenGL pipeline to the viewport
 	glutPostRedisplay(); // Call the Display function again
 }
@@ -345,6 +341,11 @@ void timer(int value) {
 	handlePowerup();
 	glutPostRedisplay();
 	handleTimeChange();
+	if (runner != NULL && runner->isCurrentlyJumping())
+		runner->updateJump();
+	if (runner != NULL && !isSpecialKeyboardPressed && ! runner->isCurrentlyJumping())
+		runner->resetPosition();
+
 	glutTimerFunc(16, timer, 0);
 }
 

@@ -4,9 +4,10 @@ class Runner {
 private:
     int lives;
     int score;
-    int positionX; // Horizontal position
-    int positionY; // Vertical position
+    float positionX; // Horizontal position
+    float positionY; // Vertical position
     bool isJumping;
+    bool isFalling;
     bool isDucking;
 
 public:
@@ -25,6 +26,7 @@ public:
     void decrementLives();
     void resetPosition();
     void jump();
+    void updateJump();
     void duck();
     void setPosition(int x, int y);
 

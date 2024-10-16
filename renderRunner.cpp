@@ -7,7 +7,7 @@ void renderRunner(Runner* runner) {
     int runnerY = runner->getPositionY();
 
     // Adjust this value to lower the runner further down
-    float groundOffset = -30.0f; // Change this value to adjust the height
+    float groundOffset = -40.0f; // Change this value to adjust the height
 
     // Runner body (main rectangle)
     glBegin(GL_QUADS);
