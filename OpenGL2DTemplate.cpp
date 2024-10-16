@@ -26,10 +26,14 @@ Collectible* collectible;
 Powerup* powerup;
 
 float moveFactor = 1.55f;
-bool isKeyPressed = false;
+bool isSpecialKeyboardPressed = false;
+bool isKeyboardPressed = false;
 bool obstacleCollided = false;
 bool collectibleCollided = false;
 
+bool isGameOver = false;
+bool isGameEnd = false;
+const int GAME_TIME = 10;
 
 bool isDay = true;
 float rotationAngle = 0.0f;
@@ -154,8 +158,7 @@ void handleObstacle() {
 		obstacleCollided = true;
 		runner->decrementLives();
 		if (runner->getLives() == 0) {
-			cout << "Game Over!" << endl;
-			exit(0);
+			isGameOver = true;
 		}
 	}
 	if (!didCollide) {
@@ -166,7 +169,7 @@ void handleObstacle() {
 
 
 void handleSpecialKeys(int key, int x, int y) {
-	isKeyPressed = true;
+	isSpecialKeyboardPressed = true;
 	switch (key) {
 	case GLUT_KEY_UP:
 		runner->jump(); // Call the jump() function when the up arrow key is pressed
@@ -180,7 +183,7 @@ void handleSpecialKeys(int key, int x, int y) {
 }
 
 void handleSpecialKeysUp(int key, int x, int y) {
-	isKeyPressed = false;
+	isSpecialKeyboardPressed = false;
 }
 
 void drawRotatingBackground() {
@@ -206,6 +209,24 @@ void Display() {
 	
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	if (isGameOver) {
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		renderBitmapString(120, 150, GLUT_BITMAP_TIMES_ROMAN_24, "Game Over!");
+		renderBitmapString(115, 135, GLUT_BITMAP_TIMES_ROMAN_24, "Press R to restart");
+		glFlush();
+		return;
+	}
+
+	if (isGameEnd) {
+		std:: string scoreText = "Score: " + std::to_string(runner->getScore());
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		renderBitmapString(70, 150, GLUT_BITMAP_TIMES_ROMAN_24, "Game End! You Arrived to Destination Successfully");
+		renderBitmapString(120, 135, GLUT_BITMAP_TIMES_ROMAN_24, scoreText.c_str());
+		renderBitmapString(115, 120, GLUT_BITMAP_TIMES_ROMAN_24, "Press R to restart");
+		glFlush();
+		return;
+	}
+
 
 	drawRotatingBackground();
 	glPushMatrix();
@@ -219,16 +240,17 @@ void Display() {
 		renderCollectible(collectible);
 
 	std::string scoreText = "Score: " + std::to_string(runner->getScore());
-	std::string timeText = "Time: " + std::to_string(getTime()) + " Seconds";
+	int remainingTime = GAME_TIME - getTime();
+	std::string timeText = "Time Left: " + std::to_string(remainingTime) + " Seconds";
 	renderBitmapString(240, 285, GLUT_BITMAP_TIMES_ROMAN_24, scoreText.c_str());
-	renderBitmapString(240, 265, GLUT_BITMAP_TIMES_ROMAN_24, timeText.c_str());
+	renderBitmapString(225, 265, GLUT_BITMAP_TIMES_ROMAN_24, timeText.c_str());
 	renderBitmapString(170, 245, GLUT_BITMAP_TIMES_ROMAN_24, "Press UP to jump and DOWN to duck");
 
 	renderGround();
 	
 	glPopMatrix();
 
-	if (isKeyPressed)
+	if (isSpecialKeyboardPressed)
 		glutSpecialFunc(handleSpecialKeys);
 	else
 		runner->resetPosition();
@@ -240,6 +262,8 @@ void Display() {
 
 
 void init() {
+	isGameOver = false;
+	isGameEnd = false;
 	runner = new Runner();
 	createObstacle();
 	createCollectible();
@@ -253,6 +277,11 @@ void init() {
 
 void handleTimeChange() {
 	int currentTime = getTime();
+
+	if (currentTime >= 10) {
+		isGameEnd = true;
+	}
+
 	if (currentTime % 10 == 0) {
 		moveFactor += 0.005f;
 	}
@@ -290,6 +319,24 @@ void timer(int value) {
 	glutTimerFunc(16, timer, 0);
 }
 
+void restartGame() {
+	free(runner);
+	free(obstacle);
+	free(collectible);
+	free(powerup);
+	init();
+}
+
+void handleKeyboardFunc(unsigned char key, int x, int y) {
+	isKeyboardPressed = true;
+	if (key == 'r')
+		restartGame();
+}
+
+void handleKeyboardUpFunc(unsigned char key, int x, int y) {
+	isKeyboardPressed = false;
+}
+
 void main(int argc, char** argr) {
 	glutInit(&argc, argr);
 	init();
@@ -302,6 +349,9 @@ void main(int argc, char** argr) {
 	
 	glutSpecialFunc(handleSpecialKeys);
     glutSpecialUpFunc(handleSpecialKeysUp); 
+
+	glutKeyboardFunc(handleKeyboardFunc);
+	glutKeyboardUpFunc(handleKeyboardUpFunc);
 
 	glutTimerFunc(0, timer, 0);
 
