@@ -1,4 +1,7 @@
 #pragma once
+#include "Powerup.h";
+
+class Powerup;
 
 class Runner {
 private:
@@ -9,6 +12,7 @@ private:
     bool isJumping;
     bool isFalling;
     bool isDucking;
+    Powerup* consumedPowerup;
 
 public:
     // Constructor
@@ -30,8 +34,14 @@ public:
     void duck();
     void setPosition(int x, int y);
 
+    void setPowerup(Powerup* powerup);
+    
+    void consumePowerup() { consumedPowerup = nullptr; }
+
     // Check if the runner is jumping or ducking
     bool isCurrentlyJumping() const;
     bool isCurrentlyDucking() const;
+
+
 };
 

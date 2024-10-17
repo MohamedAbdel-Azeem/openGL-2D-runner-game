@@ -69,5 +69,13 @@ void Runner::setPosition(int x, int y) {
     positionY = y;
 }
 
+
+void Runner::setPowerup(Powerup* powerup) {
+    consumedPowerup = powerup;
+    
+}
+
+
 bool Runner::isCurrentlyJumping() const { return isJumping || isFalling; }
 bool Runner::isCurrentlyDucking() const { return isDucking; }
+

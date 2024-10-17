@@ -1,6 +1,6 @@
-#include <glut.h>
 #include "Runner.h"
 #include "Dimensions.h"
+#include <glut.h>
 
 void renderRunner(Runner* runner) {
     int runnerX = runner->getPositionX();

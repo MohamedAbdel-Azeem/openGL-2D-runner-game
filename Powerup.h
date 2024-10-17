@@ -2,6 +2,8 @@
 #include "Runner.h"
 #include <string>
 
+class Runner;
+
 enum Powerup_Type {
 	Fly,
 	Invincible

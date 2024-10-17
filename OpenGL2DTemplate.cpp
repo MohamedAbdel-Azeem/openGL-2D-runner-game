@@ -17,6 +17,7 @@
 #include "BoundingBox.h"
 #include <glut.h>
 
+
 using namespace std;
 using namespace std::chrono;
 
@@ -28,8 +29,10 @@ Powerup* powerup;
 float moveFactor = 1.55f;
 bool isSpecialKeyboardPressed = false;
 bool isKeyboardPressed = false;
+
 bool obstacleCollided = false;
 bool collectibleCollided = false;
+bool powerupCollided = false;
 
 bool isGameOver = false;
 bool isGameEnd = false;
@@ -44,6 +47,7 @@ steady_clock::time_point lastRotationTime;
 
 
 steady_clock::time_point startTime;
+steady_clock::time_point powerup_Collected;
 
 
 
@@ -98,6 +102,7 @@ void createCollectible() {
 }
 
 void createPowerup() {
+	if (powerupCollided) return;
 	int randomNum = 1 + (rand() % 100);
 	int initialPositionX = 450;
 	int initialPositionY = (randomNum % 2 == 0) ? Ground_height : Ground_height + 50;
@@ -116,6 +121,8 @@ void createPowerup() {
 
 void handlePowerup() {
 
+	if (powerupCollided) return;
+
 	if (powerup == NULL) {
 		createPowerup();
 	}
@@ -128,6 +135,14 @@ void handlePowerup() {
 	}
 	else {
 		powerup->move(moveFactor);
+	}
+	bool didCollide = powerup->checkCollision(*runner);
+	if (didCollide && (didCollide ^ powerupCollided) && powerup != NULL) { // the Second Condition is to prevent multiple collision detection for the Same Obstacle
+		powerup->setPosition(900, 900);
+		powerupCollided = true;
+		runner->setPowerup(powerup);
+		cout << "Powerup Collected! " << powerup->getType() << endl;
+		powerup_Collected = steady_clock::now();
 	}
 }
 
@@ -233,20 +248,22 @@ void Display() {
 	
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	if (isGameOver) {
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		renderBitmapString(120, 150, GLUT_BITMAP_TIMES_ROMAN_24, "Game Over!");
-		renderBitmapString(115, 135, GLUT_BITMAP_TIMES_ROMAN_24, "Press R to restart");
-		glFlush();
-		return;
-	}
-
 	if (isGameEnd) {
-		std:: string scoreText = "Score: " + std::to_string(runner->getScore());
+		isGameOver = false;
+		std::string scoreText = "Score: " + std::to_string(runner->getScore());
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		renderBitmapString(70, 150, GLUT_BITMAP_TIMES_ROMAN_24, "Game End! You Arrived to Destination Successfully");
 		renderBitmapString(120, 135, GLUT_BITMAP_TIMES_ROMAN_24, scoreText.c_str());
 		renderBitmapString(115, 120, GLUT_BITMAP_TIMES_ROMAN_24, "Press R to restart");
+		glFlush();
+		return;
+	}
+	
+	if (isGameOver) {
+		isGameEnd = false;
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		renderBitmapString(120, 150, GLUT_BITMAP_TIMES_ROMAN_24, "Game Over!");
+		renderBitmapString(115, 135, GLUT_BITMAP_TIMES_ROMAN_24, "Press R to restart");
 		glFlush();
 		return;
 	}
@@ -257,7 +274,8 @@ void Display() {
 	renderSky();
 	renderLives(runner->getLives());
 	renderObstacle(obstacle);
-	renderPowerup(powerup);
+	if (!powerupCollided)
+		renderPowerup(powerup);
 	
 	renderRunner(runner);
 	if (!collectibleCollided)
@@ -308,7 +326,7 @@ void handleTimeChange() {
 	}
 
 	if (currentTime % 10 == 0) {
-		moveFactor += 0.005f;
+		moveFactor += 0.01f;
 	}
 
 	// Start the rotation if not currently rotating and 10 seconds have passed
@@ -333,6 +351,14 @@ void handleTimeChange() {
 			isRotating = false; // Stop rotating
 		}
 	}
+
+	if (powerupCollided && duration_cast<seconds>(steady_clock::now() - powerup_Collected).count() >= 5) {
+		runner->consumePowerup();
+		powerupCollided = false;
+		cout << "Powerup Consumed!" << endl;
+	}
+
+
 }
 
 void timer(int value) {
@@ -354,6 +380,7 @@ void restartGame() {
 	free(obstacle);
 	free(collectible);
 	free(powerup);
+	moveFactor = 1.55f;
 	init();
 }
 
