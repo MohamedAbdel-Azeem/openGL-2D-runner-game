@@ -15,6 +15,7 @@ void drawCircle(float cx, float cy, float radius, int num_segments) {
     glEnd();
 }
 
+
 void renderRunner(Runner* runner) {
     int runnerX = runner->getPositionX();
     int runnerY = runner->getPositionY();

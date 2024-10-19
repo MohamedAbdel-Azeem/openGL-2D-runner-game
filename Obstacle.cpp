@@ -30,14 +30,17 @@ bool Obstacle::checkCollision(const Runner& runner) {
     int runnerX = runner.getPositionX();
     int runnerY = runner.getPositionY();
 
+    if (type != "ground")
+        runnerX += 35; // Adjust the runner's hitbox to match the Rocket's hitbox
+
     // Define the reduced hitbox dimensions
-    int runnerWidth = 10 / 2; // Half of the original width
+    int runnerWidth = 10; // Half of the original width
     int runnerHeight = 30 / 2; // Half of the original height
-    int obstacleWidth = 30 / 2; // Half of the original width
+    int obstacleWidth = 30; // Half of the original width
     int obstacleHeight = 40; // full of the original height
 
     // Adjust the collision logic to use the reduced hitbox dimensions
-    if (runnerX + runnerWidth > positionX && runnerX - runnerWidth < positionX + obstacleWidth) { // Check X overlap
+    if (runnerX + runnerWidth + 10 > positionX && runnerX - runnerWidth -10 < positionX + obstacleWidth) { // Check X overlap
         if (type == "ground") {
             return ! runner.isCurrentlyJumping();
         }

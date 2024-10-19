@@ -7,7 +7,7 @@ BoundingBox getBoundingBox(Obstacle* obstacle) {
     }
     int* pos = obstacle->getPosition();
     return BoundingBox(pos[0] - Rocket_body_width, pos[1] - Rocket_body_height,
-        Rocket_body_width * 2, Rocket_body_height);
+        Rocket_body_width * 2 , Rocket_body_height);
 }
 
 // Function to get the bounding box of a collectible
