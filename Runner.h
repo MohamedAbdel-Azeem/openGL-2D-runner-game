@@ -26,7 +26,7 @@ public:
     
 
     // Methods to modify state
-    void incrementScore();
+    void incrementScore(bool double_score);
     void decrementLives();
     void resetPosition();
     void jump();

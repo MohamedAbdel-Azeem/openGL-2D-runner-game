@@ -6,7 +6,8 @@ class Runner;
 
 enum Powerup_Type {
 	Fly,
-	Invincible
+	Double_Score,
+	None
 };
 
 class Powerup

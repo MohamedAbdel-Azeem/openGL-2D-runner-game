@@ -125,6 +125,7 @@ void handlePowerup() {
 
 	if (powerup == NULL) {
 		createPowerup();
+		return;
 	}
 
 	int* pos = powerup->getPosition();
@@ -150,6 +151,7 @@ void handleCollectible() {
 
 	if (collectible == NULL) {
 		createCollectible();
+		return;
 	}
 
 	int* pos = collectible->getPosition();
@@ -164,7 +166,8 @@ void handleCollectible() {
 	bool didCollide = collectible->checkCollision(*runner);
 	if (didCollide && (didCollide ^ collectibleCollided)) { // the Second Condition is to prevent multiple collision detection for the Same Obstacle
 			collectibleCollided = true;
-			runner->incrementScore();
+			bool double_score = powerupCollided && powerup->getType() == Double_Score;
+			runner->incrementScore(double_score);
 			collectible->setCollide();
 	}
 	if (!didCollide) {
@@ -176,6 +179,7 @@ void handleObstacle() {
 
 	if (obstacle == NULL) {
 		createObstacle();
+		return;
 	}
 
 	int* pos = obstacle->getPosition();
@@ -362,11 +366,13 @@ void handleTimeChange() {
 }
 
 void timer(int value) {
-	handleObstacle();
-	handleCollectible();
-	handlePowerup();
-	glutPostRedisplay();
-	handleTimeChange();
+	if (!isGameOver && !isGameEnd) {
+		handleObstacle();
+		handleCollectible();
+		handlePowerup();
+		glutPostRedisplay();
+		handleTimeChange();
+	}
 	if (runner != NULL && runner->isCurrentlyJumping())
 		runner->updateJump();
 	if (runner != NULL && !isSpecialKeyboardPressed && ! runner->isCurrentlyJumping())

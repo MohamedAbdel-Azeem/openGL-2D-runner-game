@@ -16,7 +16,10 @@ int Runner::getPositionX() const { return positionX; }
 int Runner::getPositionY() const { return positionY; }
 
 // Methods to modify state
-void Runner::incrementScore() { score++; }
+void Runner::incrementScore(bool doubleScore) {
+    (doubleScore) ? score += 2 : score++;
+}
+
 void Runner::decrementLives() { lives--; }
 void Runner::resetPosition() 
 { 
