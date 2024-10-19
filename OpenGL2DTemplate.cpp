@@ -36,7 +36,7 @@ bool powerupCollided = false;
 
 bool isGameOver = false;
 bool isGameEnd = false;
-const int GAME_TIME = 90;
+const int GAME_TIME = 60;
 
 bool isDay = true;
 float rotationAngle = 0.0f;
@@ -142,7 +142,6 @@ void handlePowerup() {
 		powerup->setPosition(900, 900);
 		powerupCollided = true;
 		runner->setPowerup(powerup);
-		cout << "Powerup Collected! " << powerup->getType() << endl;
 		powerup_Collected = steady_clock::now();
 	}
 }
@@ -161,7 +160,11 @@ void handleCollectible() {
 			createCollectible();
 	}
 	else {
-		collectible->move(moveFactor);
+		float usedMoveFactor = moveFactor;
+		if (powerupCollided && runner->getPowerup() != NULL && runner->getPowerup()->getType() == Slower) {
+			usedMoveFactor = moveFactor/2;
+		}
+		collectible->move(usedMoveFactor);
 	}
 	bool didCollide = collectible->checkCollision(*runner);
 	if (didCollide && (didCollide ^ collectibleCollided)) { // the Second Condition is to prevent multiple collision detection for the Same Obstacle
@@ -189,7 +192,11 @@ void handleObstacle() {
 		createObstacle();
 	}
 	else {
-		obstacle->move(moveFactor);
+		float usedMoveFactor = moveFactor;
+		if (powerupCollided && runner->getPowerup() != NULL && runner->getPowerup()->getType() == Slower) {
+			usedMoveFactor = moveFactor / 2;
+		}
+		obstacle->move(usedMoveFactor);
 	}
 	bool didCollide = obstacle->checkCollision(*runner);
 	if (didCollide && (didCollide ^ obstacleCollided)) { // the Second Condition is to prevent multiple collision detection for the Same Obstacle
@@ -290,7 +297,17 @@ void Display() {
 	std::string timeText = "Time Left: " + std::to_string(remainingTime) + " Seconds";
 	renderBitmapString(240, 285, GLUT_BITMAP_TIMES_ROMAN_24, scoreText.c_str());
 	renderBitmapString(225, 265, GLUT_BITMAP_TIMES_ROMAN_24, timeText.c_str());
-	renderBitmapString(170, 245, GLUT_BITMAP_TIMES_ROMAN_24, "Press UP to jump and DOWN to duck");
+
+	if (powerupCollided) {
+		Powerup* runnerPowerup = runner->getPowerup();
+		if (runnerPowerup != NULL) {
+			Powerup_Type type = runnerPowerup->getType();
+			int timeLeft = duration_cast<seconds>(steady_clock::now() - powerup_Collected).count();
+			std::string type_text = (type == Double_Score) ? "Double Score" : "Freeze";
+			std::string powerupText = "Powerup: " + type_text + " ends in: " + std::to_string(5 - timeLeft) + " Seconds";
+			renderBitmapString(165, 250, GLUT_BITMAP_TIMES_ROMAN_24, powerupText.c_str());
+		}
+	}
 
 	renderGround();
 	
@@ -319,6 +336,8 @@ void init() {
 void softRestart() { // When an Obstacle Collides with the Runner Game will do a Soft Restart
 	collectible = NULL;
 	powerup = NULL;
+	runner->consumePowerup();
+	powerupCollided = false;
 	obstacle = NULL;
 }
 

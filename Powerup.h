@@ -5,7 +5,7 @@
 class Runner;
 
 enum Powerup_Type {
-	Fly,
+	Slower,
 	Double_Score,
 	None
 };

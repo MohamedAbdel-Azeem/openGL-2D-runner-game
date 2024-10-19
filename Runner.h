@@ -35,8 +35,9 @@ public:
     void setPosition(int x, int y);
 
     void setPowerup(Powerup* powerup);
-    
     void consumePowerup() { consumedPowerup = nullptr; }
+    Powerup* getPowerup() const { return consumedPowerup; };
+
 
     // Check if the runner is jumping or ducking
     bool isCurrentlyJumping() const;
