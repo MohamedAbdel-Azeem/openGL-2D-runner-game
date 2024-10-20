@@ -10,7 +10,7 @@ void renderDoubleScorePowerup(Powerup* powerup) {
     int y = pos[1];
 
     if (y < 60) { // Adjust y position for Ground level
-        y = 65;
+        y = 50;
     }
 
     // Static variable for angle to persist between function calls
@@ -81,7 +81,7 @@ void renderSlowPowerup(Powerup* powerup) {
 
     // Adjust y position if needed
     if (y < 60) {
-        y = 65;
+        y = 55;
     }
     else {
         y += 20;

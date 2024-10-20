@@ -15,6 +15,7 @@
 #include "Powerup.h"
 #include "renderPowerup.h"
 #include "BoundingBox.h"
+#include "SoundPlayer.h"
 #include <glut.h>
 
 
@@ -26,7 +27,7 @@ Runner* runner;
 Collectible* collectible;
 Powerup* powerup;
 
-float moveFactor = 1.55f;
+float moveFactor = 1.7f;
 bool isSpecialKeyboardPressed = false;
 bool isKeyboardPressed = false;
 
@@ -139,9 +140,11 @@ void handlePowerup() {
 	}
 	bool didCollide = powerup->checkCollision(*runner);
 	if (didCollide && (didCollide ^ powerupCollided) && powerup != NULL) { // the Second Condition is to prevent multiple collision detection for the Same Obstacle
+		SoundPlayer_playPowerupSound();
 		powerup->setPosition(900, 900);
 		powerupCollided = true;
 		runner->setPowerup(powerup);
+		cout << "Powerup Collected!" << endl;
 		powerup_Collected = steady_clock::now();
 	}
 }
@@ -168,6 +171,7 @@ void handleCollectible() {
 	}
 	bool didCollide = collectible->checkCollision(*runner);
 	if (didCollide && (didCollide ^ collectibleCollided)) { // the Second Condition is to prevent multiple collision detection for the Same Obstacle
+			SoundPlayer_playCollectibleSound();
 			collectibleCollided = true;
 			bool double_score = powerupCollided && powerup->getType() == Double_Score;
 			runner->incrementScore(double_score);
@@ -193,7 +197,8 @@ void handleObstacle() {
 	}
 	else {
 		float usedMoveFactor = moveFactor;
-		if (powerupCollided && runner->getPowerup() != NULL && runner->getPowerup()->getType() == Slower) {
+		if (powerupCollided && runner->getPowerup() != nullptr && runner->getPowerup()->getType() == Slower) {
+			cout << "Slower Powerup is Active!" << endl;
 			usedMoveFactor = moveFactor / 2;
 		}
 		obstacle->move(usedMoveFactor);
@@ -201,10 +206,12 @@ void handleObstacle() {
 	bool didCollide = obstacle->checkCollision(*runner);
 	if (didCollide && (didCollide ^ obstacleCollided)) { // the Second Condition is to prevent multiple collision detection for the Same Obstacle
 		cout << "Collision!" << endl;
+		SoundPlayer_playObstacleSound();
 		obstacleCollided = true;
 		runner->decrementLives();
 		if (runner->getLives() == 0) {
 			isGameOver = true;
+			SoundPlayer_PostGameSound(true);
 		}
 		else {
 			softRestart();
@@ -322,6 +329,8 @@ void Display() {
 void init() {
 	isGameOver = false;
 	isGameEnd = false;
+	powerupCollided = false;
+	moveFactor = 1.55f;
 	runner = new Runner();
 	createObstacle();
 	createCollectible();
@@ -329,6 +338,9 @@ void init() {
 
 	startTime = steady_clock::now();
 	lastRotationTime = steady_clock::now();
+
+	Soundplayer_init();
+	Soundplayer_playBackgroundMusic();
 }
 
 
@@ -346,9 +358,10 @@ void handleTimeChange() {
 
 	if (currentTime >= GAME_TIME) {
 		isGameEnd = true;
+		SoundPlayer_PostGameSound(false);
 	}
 
-	if (currentTime % 10 == 0) {
+	if (currentTime % 10 == 0 && !powerupCollided) {
 		moveFactor += 0.01f;
 	}
 
@@ -376,11 +389,11 @@ void handleTimeChange() {
 	}
 
 	if (powerupCollided && duration_cast<seconds>(steady_clock::now() - powerup_Collected).count() >= 5) {
+		powerup = NULL;
 		runner->consumePowerup();
 		powerupCollided = false;
 		cout << "Powerup Consumed!" << endl;
 	}
-
 
 }
 
@@ -401,11 +414,6 @@ void timer(int value) {
 }
 
 void restartGame() {
-	free(runner);
-	free(obstacle);
-	free(collectible);
-	free(powerup);
-	moveFactor = 1.55f;
 	init();
 }
 
@@ -422,6 +430,8 @@ void handleKeyboardUpFunc(unsigned char key, int x, int y) {
 void main(int argc, char** argr) {
 	glutInit(&argc, argr);
 	init();
+
+
 
 	glutInitWindowSize(960, 640);
 	glutInitWindowPosition(150, 90);

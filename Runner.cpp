@@ -75,7 +75,6 @@ void Runner::setPosition(int x, int y) {
 
 void Runner::setPowerup(Powerup* powerup) {
     consumedPowerup = powerup;
-    
 }
 
 

@@ -14,6 +14,8 @@ void renderSkyObstacle(Obstacle* obstacle)
     int obstacleX = position[0];
     int obstacleY = position[1];
 
+    obstacleY += 5; 
+
     // Adjust this value to lower the rocket further down
     float rocketOffset = 15.0f; // Change this value to adjust the height
 

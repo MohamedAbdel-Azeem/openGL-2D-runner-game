@@ -23,7 +23,12 @@ void Powerup::move(float factor)
 }
 
 Powerup_Type Powerup::getType() const{
-    return type;
+    try {
+		return type;
+	}
+    catch (const std::exception& e) {
+		return None;
+	}
 }
 
 bool Powerup::checkCollision(const Runner& runner)
